@@ -5,19 +5,31 @@ use Phalcon\Mvc\View;
 use Phalcon\Mvc\Application;
 use Phalcon\Di\FactoryDefault;
 use Phalcon\Mvc\Url as UrlProvider;
+use Phalcon\Db\Adapter\Pdo\Mysql as DbAdapter;
 
 // Define some absolute path constants to aid in locating resources
 define('BASE_PATH', dirname(__DIR__));
 define('APP_PATH', BASE_PATH . '/app');
 
+$server = $_SERVER['SERVER_ADDR'];
+if ($server == '127.0.0.1') {
+    echo 'Dev';
+    $username = 'root';
+    $password = 'root';
+} else {
+    echo 'Live';
+    $username = 'wolscy_phalcon';
+    $password = 'BB=aMHo^uqKH';
+}
+
 // Register an autoloader
 $loader = new Loader();
 
 $loader->registerDirs(
-    [
-        APP_PATH . '/controllers/',
-        APP_PATH . '/models/',
-    ]
+        [
+            APP_PATH . '/controllers/',
+            APP_PATH . '/models/',
+        ]
 );
 
 $loader->register();
@@ -27,22 +39,35 @@ $di = new FactoryDefault();
 
 // Setup the view component
 $di->set(
-    'view',
-    function () {
-        $view = new View();
-        $view->setViewsDir(APP_PATH . '/views/');
-        return $view;
-    }
+        'view', function () {
+    $view = new View();
+    $view->setViewsDir(APP_PATH . '/views/');
+    return $view;
+}
 );
 
 // Setup a base URI so that all generated URIs include the "tutorial" folder
 $di->set(
-    'url',
-    function () {
-        $url = new UrlProvider();
-        $url->setBaseUri('/');
-        return $url;
-    }
+        'url', function () {
+    $url = new UrlProvider();
+    $url->setBaseUri('/');
+    return $url;
+}
+);
+
+
+// Setup the database service
+$di->set(
+        'db', function () {
+    return new DbAdapter(
+            [
+        'host' => '127.0.0.1',
+        'username' => $username,
+        'password' => $password,
+        'dbname' => 'wolscy_phalcon',
+            ]
+    );
+}
 );
 
 $application = new Application($di);
