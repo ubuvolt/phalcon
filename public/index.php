@@ -11,17 +11,6 @@ use Phalcon\Db\Adapter\Pdo\Mysql as DbAdapter;
 define('BASE_PATH', dirname(__DIR__));
 define('APP_PATH', BASE_PATH . '/app');
 
-$server = $_SERVER['SERVER_ADDR'];
-if ($server == '127.0.0.1') {
-    echo 'Dev';
-    $username = 'root';
-    $password = 'root';
-} else {
-    echo 'Live';
-    $username = 'wolscy_phalcon';
-    $password = 'BB=aMHo^uqKH';
-}
-
 // Register an autoloader
 $loader = new Loader();
 
@@ -55,20 +44,36 @@ $di->set(
 }
 );
 
-
+$server = $_SERVER['SERVER_ADDR'];
+if ($server == '127.0.0.1') {
 // Setup the database service
-$di->set(
-        'db', function () {
-    return new DbAdapter(
-            [
-        'host' => '127.0.0.1',
-        'username' => $username,
-        'password' => $password,
-        'dbname' => 'wolscy_phalcon',
-            ]
+    $di->set(
+            'db', function () {
+        return new DbAdapter(
+                [
+            'host' => '127.0.0.1',
+            'username' => 'root',
+            'password' => 'root',
+            'dbname' => 'wolscy_phalcon',
+                ]
+        );
+    }
+    );
+} else {
+// Setup the database service
+    $di->set(
+            'db', function () {
+        return new DbAdapter(
+                [
+            'host' => '127.0.0.1',
+            'username' => 'wolscy_phalcon',
+            'password' => 'BB=aMHo^uqKH',
+            'dbname' => 'wolscy_phalcon',
+                ]
+        );
+    }
     );
 }
-);
 
 $application = new Application($di);
 
