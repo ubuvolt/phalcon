@@ -7,6 +7,10 @@ class SignupController extends Controller {
     public function indexAction() {
         
     }
+    
+    public function testAction() {
+        
+    }
 
     public function registerAction() {
         $user = new Users();
